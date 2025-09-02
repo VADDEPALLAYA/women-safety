@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeguardHer - AI-Powered Women Safety Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .safety-low { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        .safety-moderate { 
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: #2d3436;
+        }
+        .safety-high { 
+            background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+            color: white;
+        }
+        .safety-very-high { 
+            background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+            color: white;
+        }
+        
+        .emergency-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: all 0.4s ease;
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .safety-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .safety-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .map-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-shield-heart text-purple-600 text-3xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <span class="text-2xl font-bold text-purple-700">Safeguard</span>
+                        <span class="text-2xl font-light text-gray-800">Her</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</a>
+                    <a href="#predict" class="text-gray-700 hover:text-purple-600 transition-colors font-medium">Predict Safety</a>
+                    <a href="#resources" class="text-gray-700 hover:text-purple-600 transition-colors font-medium">Resources</a>
+                    <a href="#emergency" class="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition-colors font-medium">Emergency</a>
+                </div>
+                
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-700">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        Your Safety,<br>
+                        <span class="text-purple-200">Intelligently Protected</span>
+                    </h1>
+                    <p class="text-xl opacity-90 mb-8">
+                        Advanced AI-powered safety prediction and real-time protection for women. 
+                        Stay safe wherever you go with intelligent route analysis and instant emergency response.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="scrollToSection('predict')" class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl">
+                            <i class="fas fa-shield-alt mr-2"></i>Check Safety Now
+                        </button>
+                        <button onclick="scrollToSection('emergency')" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all">
+                            <i class="fas fa-bell mr-2"></i>Emergency Help
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <img src="https://placehold.co/600x400" alt="Confident woman using smartphone with safety app interface showing green safety indicators and protective shield graphics" class="rounded-3xl shadow-2xl mx-auto transform hover:scale-105 transition-transform duration-300" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">98%</div>
+                    <div class="text-gray-600">Accuracy Rate</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">24/7</div>
+                    <div class="text-gray-600">Protection</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">50K+</div>
+                    <div class="text-gray-600">Users Protected</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">2min</div>
+                    <div class="text-gray-600">Avg Response Time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Prediction Section -->
+    <section id="predict" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">AI-Powered Safety Prediction</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Our advanced algorithm analyzes multiple factors to predict safety levels and provide personalized recommendations for your journey.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Prediction Form -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">
+                        <i class="fas fa-route text-purple-600 mr-2"></i>Plan Your Journey
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>Current Location
+                            </label>
+                            <div class="flex gap-3">
+                                <input type="text" id="currentLocation" placeholder="Enter your current address" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                                <button onclick="getCurrentLocation()" class="px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
+                                    <i class="fas fa-location-arrow"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-flag text-purple-600 mr-2"></i>Destination
+                            </label>
+                            <input type="text" id="destination" placeholder="Where are you going?" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clock text-purple-600 mr-2"></i>Travel Time
+                                </label>
+                                <input type="time" id="travelTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-car text-purple-600 mr-2"></i>Transport Mode
+                                </label>
+                                <select id="transportMode" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    <option value="walking">Walking</option>
+                                    <option value="public">Public Transport</option>
+                                    <option value="private">Private Vehicle</option>
+                                    <option value="ride">Ride Share</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-users text-purple-600 mr-2"></i>Travel Companions
+                            </label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option>Alone</option>
+                                <option>With 1-2 people</option>
+                                <option>With group (3+ people)</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="predictSafety()" class="w-full bg-purple-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-purple-700 transition-all transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-brain mr-2"></i>Analyze Safety
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Prediction Results -->
+                <div class="space-y-6">
+                    <div id="predictionResult" class="bg-white p-8 rounded-2xl shadow-xl text-center">
+                        <div class="text-gray-400 mb-6">
+                            <i class="fas fa-search-location text-6xl mb-4"></i>
+                            <p class="text-lg">Enter your journey details to get AI-powered safety prediction</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-xl">
+                        <h4 class="font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Proactive Safety Tips
+                        </h4>
+                        <div id="safetyTips" class="space-y-3">
+                            <div class="flex items-start p-3 bg-blue-50 rounded-lg">
+                                <i class="fas fa-share-alt text-blue-600 mt-1 mr-3"></i>
+                                <span class="text-sm">Always share your live location with trusted contacts before traveling</span>
+                            </div>
+                            <div class="flex items-start p-3 bg-green-50 rounded-lg">
+                                <i class="fas fa-phone text-green-600 mt-1 mr-3"></i>
+                                <span class="text-sm">Keep emergency numbers saved on speed dial</span>
+                            </div>
+                            <div class="flex items-start p-3 bg-purple-50 rounded-lg">
+                                <i class="fas fa-lightbulb text-purple-600 mt-1 mr-3"></i>
+                                <span class="text-sm">Stay in well-lit areas and avoid isolated shortcuts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Safety Map -->
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-xl">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-map-marked-alt text-purple-600 mr-2"></i>Live Safety Heat Map
+                </h3>
+                <div class="map-container h-80 rounded-xl overflow-hidden relative">
+                    <img src="https://placehold.co/800x400" alt="Interactive safety heat map showing color-coded safe zones, moderate risk areas, and high-risk zones with route optimization suggestions" class="w-full h-full object-cover" />
+                    <div class="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-md">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-4 h-4 bg-green-500 rounded"></div>
+                            <span>Safe</span>
+                            <div class="w-4 h-4 bg-yellow-500 rounded"></div>
+                            <span>Moderate</span>
+                            <div class="w-4 h-4 bg-red-500 rounded"></div>
+                            <span>High Risk</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Section -->
+    <section id="emergency" class="py-20 bg-red-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Emergency Response System</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Instant access to emergency services and your safety network when you need it most.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Emergency Actions -->
+                <div class="space-y-6">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">
+                            <i class="fas fa-bell text-red-600 mr-2"></i>Quick Actions
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <button onclick="triggerEmergency()" class="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-red-700 transition-all emergency-pulse flex items-center justify-center gap-3 text-lg">
+                                <i class="fas fa-bell"></i>
+                                EMERGENCY ALERT
+                            </button>
+                            
+                            <button onclick="shareLocation()" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-share-alt"></i>
+                                Share Live Location
+                            </button>
+                            
+                            <button onclick="fakeCall()" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-phone"></i>
+                                Fake Call (Safety Feature)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contacts -->
+                    <div class="bg-white p-6 rounded-2xl shadow-xl">
+                        <h4 class="font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-address-book text-purple-600 mr-2"></i>Emergency Contacts
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-alt text-blue-600 mr-3"></i>
+                                    <span>Local Police</span>
+                                </div>
+                                <button onclick="callNumber('100')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Call 100
+                                </button>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-female text-pink-600 mr-3"></i>
+                                    <span>Women Helpline</span>
+                                </div>
+                                <button onclick="callNumber('1091')" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
+                                    Call 1091
+                                </button>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-ambulance text-red-600 mr-3"></i>
+                                    <span>Ambulance</span>
+                                </div>
+                                <button onclick="callNumber('108')" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                                    Call 108
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Safety Network -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">
+                        <i class="fas fa-users text-purple-600 mr-2"></i>My Safety Network
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Add Trusted Contact</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Contact Name" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+                            <input type="tel" placeholder="Phone Number" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+                            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-4">Your Safety Circle</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Mom</div>
+                                        <div class="text-sm text-gray-500">+91 XXXXXXX890</div>
+                                    </div>
+                                </div>
+                                <button class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user-friends text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Best Friend</div>
+                                        <div class="text-sm text-gray-500">+91 XXXXXXX123</div>
+                                    </div>
+                                </div>
+                                <button class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-3"></i>
+                            <div class="text-sm text-yellow-800">
+                                <strong>Emergency contacts</strong> will be automatically notified when you trigger an emergency alert with your live location.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Safety Resources & Education</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Comprehensive resources to empower you with knowledge and skills for personal safety.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="safety-card bg-gray-50 p-6 rounded-2xl">
+                    <div class="text-center mb-4">
+                        <img src="https://placehold.co/300x200" alt="Women practicing self-defense techniques in a well-lit training studio with instructor guidance" class="rounded-lg mb-4" />
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Self-Defense Training</h3>
+                    <p class="text-gray-600 mb-4">Learn practical self-defense techniques and build confidence to protect yourself in challenging situations.</p>
+                    <button class="text-purple-600 font-semibold hover:text-purple-800 flex items-center">
+                        Learn Techniques <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <div class="safety-card bg-gray-50 p-6 rounded-2xl">
+                    <div class="text-center mb-4">
+                        <img src="https://placehold.co/300x200" alt="Smartphone showing safety app interface with emergency buttons and location tracking features" class="rounded-lg mb-4" />
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Safety Apps Guide</h3>
+                    <p class="text-gray-600 mb-4">Discover the best safety applications with features like emergency alerts, location sharing, and real-time tracking.</p>
+                    <button class="text-purple-600 font-semibold hover:text-purple-800 flex items-center">
+                        Explore Apps <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <div class="safety-card bg-gray-50 p-6 rounded-2xl">
+                    <div class="text-center mb-4">
+                        <img src="https://placehold.co/300x200" alt="Support group meeting with diverse women sharing experiences and providing mutual support" class="rounded-lg mb-4" />
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Community Support</h3>
+                    <p class="text-gray-600 mb-4">Connect with local support groups, counseling services, and women's safety organizations in your area.</p>
+                    <button class="text-purple-600 font-semibold hover:text-purple-800 flex items-center">
+                        Find Support <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-purple-50 p-8 rounded-2xl">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-600 mb-2">How accurate is the safety prediction?</h4>
+                        <p class="text-gray-600">Our AI algorithm analyzes multiple data points including time, location, historical safety data, and crowd-sourced information to provide 98% accurate predictions.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-600 mb-2">Is my location data secure?</h4>
+                        <p class="text-gray-600">Yes, we use end-to-end encryption and your location is only shared with emergency contacts when you explicitly trigger an alert.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-600 mb-2">What should I do in an emergency?</h4>
+                        <p class="text-gray-600">Trigger the emergency alert button, which will notify your safety network and share your live location. Then call local emergency services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-shield-heart text-purple-400 mr-2"></i>SafeguardHer
+                    </h3>
+                    <p class="text-gray-400 mb-4">Advanced AI-powered safety prediction and emergency response for women's security.</p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#predict" class="hover:text-white transition-colors">Safety Prediction</a></li>
+                        <li><a href="#emergency" class="hover:text-white transition-colors">Emergency Help</a></li>
+                        <li><a href="#resources" class="hover:text-white transition-colors">Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            support@safeguardher.com
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2"></i>
+                            +91-XXX-XXX-XXXX
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            24/7 Helpline: 1091
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Download Our App</h3>
+                    <div class="space-y-3">
+                        <button class="w-full bg-black text-white px-4 py-3 rounded-lg flex items-center justify-center hover:bg-gray-900 transition-colors">
+                            <i class="fab fa-apple mr-3 text-2xl"></i>
+                            <div class="text-left">
+                                <div class="text-xs">Download on the</div>
+                                <div class="font-semibold">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-green-600 text-white px-4 py-3 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors">
+                            <i class="fab fa-google-play mr-3 text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-xs">GET IT ON</div>
+                                <div class="font-semibold">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 SafeguardHer. All rights reserved. Made with ❤️ for women's safety.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle mr-3"></i>
+            <span id="notificationMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Get current location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                showNotification('Getting your location...', 'info');
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        // Simulate reverse geocoding
+                        const addresses = [
+                            "Main Street, City Center",
+                            "Park Avenue, Downtown",
+                            "Riverfront Road",
+                            "University Circle",
+                            "Shopping District"
+                        ];
+                        const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
+                        document.getElementById('currentLocation').value = randomAddress;
+                        showNotification('Location captured successfully!', 'success');
+                    },
+                    (error) => {
+                        showNotification('Please enable location services or enter manually', 'error');
+                    }
+                );
+            } else {
+                showNotification('Geolocation is not supported by your browser', 'error');
+            }
+        }
+
+        // Safety prediction with enhanced simulation
+        function predictSafety() {
+            const currentLocation = document.getElementById('currentLocation').value;
+            const destination = document.getElementById('destination').value;
+            const travelTime = document.getElementById('travelTime').value;
+            const transportMode = document.getElementById('transportMode').value;
+
+            if (!currentLocation || !destination) {
+                showNotification('Please enter both current location and destination', 'error');
+                return;
+            }
+
+            // Enhanced simulation with more factors
+            const safetyLevels = [
+                { level: 'Low', score: 25, color: 'red', icon: '😨' },
+                { level: 'Moderate', score: 50, color: 'orange', icon: '😟' },
+                { level: 'High', score: 75, color: 'blue', icon: '🙂' },
+                { level: 'Very High', score: 95, color: 'green', icon: '😊' }
+            ];
+            
+            const predictions = {
+                'Low': {
+                    message: 'High risk detected. Consider alternative routes or postpone travel.',
+                    tips: [
+                        'Avoid this route if possible',
+                        'Travel with trusted companions',
+                        'Share live location immediately',
+                        'Have emergency numbers ready'
+                    ],
+                    recommendations: [
+                        'Choose a different time to travel',
+                        'Use verified transportation services',
+                        'Stay in well-populated areas'
+                    ]
+                },
+                'Moderate': {
+                    message: 'Moderate risk. Stay alert and take precautions.',
+                    tips: [
+                        'Stay in well-lit areas',
+                        'Keep phone charged and accessible',
+                        'Avoid distractions while walking',
+                        'Trust your instincts'
+                    ],
+                    recommendations: [
+                        'Consider traveling with someone',
+                        'Plan your route in advance',
+                        'Check in with contacts regularly'
+                    ]
+                },
+                'High': {
+                    message: 'Generally safe conditions. Standard precautions apply.',
+                    tips: [
+                        'Normal safety awareness',
+                        'Be mindful of surroundings',
+                        'Keep emergency contacts handy',
+                        'Stay on main routes'
+                    ],
+                    recommendations: [
+                        'Enjoy your journey responsibly',
+                        'Maintain situational awareness',
+                        'Regular safety checks'
+                    ]
+                },
+                'Very High': {
+                    message: 'Excellent safety conditions. Minimal concerns.',
+                    tips: [
+                        'Standard urban awareness',
+                        'Normal precautionary measures',
+                        'Enjoy your travel experience',
+                        'Stay connected as usual'
+                    ],
+                    recommendations: [
+                        'Confident travel recommended',
+                        'Minimal restrictions apply',
+                        'Normal safety protocols'
+                    ]
+                }
+            };
+
+            // More sophisticated random selection with weighting
+            const weightedSelection = Math.random();
+            let selectedLevel;
+            if (weightedSelection < 0.1) selectedLevel = safetyLevels[0]; // 10% Low
+            else if (weightedSelection < 0.3) selectedLevel = safetyLevels[1]; // 20% Moderate
+            else if (weightedSelection < 0.7) selectedLevel = safetyLevels[2]; // 40% High
+            else selectedLevel = safetyLevels[3]; // 30% Very High
+
+            const result = predictions[selectedLevel.level];
+            const resultDiv = document.getElementById('predictionResult');
+            
+            resultDiv.className = `safety-${selectedLevel.level.toLowerCase().replace(' ', '-')} p-8 rounded-2xl text-center`;
+            resultDiv.innerHTML = `
+                <div class="text-5xl mb-4">${selectedLevel.icon}</div>
+                <div class="text-3xl font-bold mb-2">${selectedLevel.level} Safety</div>
+                <div class="text-xl mb-6">${result.message}</div>
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                    <div class="progress-bar h-3 rounded-full bg-${selectedLevel.color}-500" style="width: ${selectedLevel.score}%"></div>
+                </div>
+                <div class="text-sm">Safety Score: ${selectedLevel.score}%</div>
+            `;
+
+            // Update safety tips
+            const tipsContainer = document.getElementById('safetyTips');
+            tipsContainer.innerHTML = result.tips.map(tip => `
+                <div class="flex items-start p-3 bg-${selectedLevel.color}-50 rounded-lg border-l-4 border-${selectedLevel.color}-500">
+                    <i class="fas fa-check-circle text-${selectedLevel.color}-600 mt-1 mr-3"></i>
+                    <span class="text-sm">${tip}</span>
+                </div>
+            `).join('');
+
+            showNotification(`Safety analysis complete: ${selected
